@@ -22,7 +22,7 @@ body = open('/mnt/c/Simon/CMU/Fall2021/14-848/HW/HW3/data/exp1.csv','rb')
 o = s3.Object('14848hw3nosqltest', 'exp1').put(Body=body)
 s3.Object('14848hw3nosqltest','exp1').Acl().put(ACL='public-read')
 
-# # create a DynamoDB table
+# create a DynamoDB table
 dyndb = boto3.resource('dynamodb',
     region_name='us-west-2',
     aws_access_key_id=ACCESS_KEY_ID,
@@ -53,7 +53,7 @@ try:
         ],
         ProvisionedThroughput={
             'ReadCapacityUnits': 5,
-            'WriteCapcityUnits': 5
+            'WriteCapacityUnits': 5
         }
     )
 except Exception as e:
