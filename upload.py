@@ -6,9 +6,6 @@ import csv
 ACCESS_KEY_ID = environ.get('ACCESS_KEY_ID')
 SECRET_ACCESS_KEY_ID = environ.get('SECRET_ACCESS_KEY_ID')
 
-print(ACCESS_KEY_ID)
-print(SECRET_ACCESS_KEY_ID)
-
 # Upload your data as blobs to the S3 bucket
 s3 = boto3.resource('s3', aws_access_key_id=ACCESS_KEY_ID, aws_secret_access_key=SECRET_ACCESS_KEY_ID)
 try:
