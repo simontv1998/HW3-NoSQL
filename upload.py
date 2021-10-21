@@ -9,7 +9,7 @@ SECRET_ACCESS_KEY_ID = environ.get('SECRET_ACCESS_KEY_ID')
 # Upload your data as blobs to the S3 bucket
 s3 = boto3.resource('s3', aws_access_key_id=ACCESS_KEY_ID, aws_secret_access_key=SECRET_ACCESS_KEY_ID)
 try:
-    s3.create_bucket(Bucket='14848hw2nosqltest', CreateBucketConfiguration={'LocationConstraint': 'us-west-2'})
+    s3.create_bucket(Bucket='14848hw3nosqltest', CreateBucketConfiguration={'LocationConstraint': 'us-west-2'})
 except Exception as e:
     print(e)
 
