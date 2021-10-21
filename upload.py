@@ -13,14 +13,14 @@ try:
 except Exception as e:
     print(e)
 
-# we make this bucket pubclicly readable
+# # we make this bucket pubclicly readable
 bucket = s3.Bucket("14848hw3nosqltest")
 bucket.Acl().put(ACL='public-read')
 
 # # upload a file into the bucket
-body = open('/mnt/c/Simon/CMU/Fall2021/14-848/HW/HW3/data/exp1.csv','rb')
-o = s3.Object('14848hw3nosqltest', 'exp1').put(Body=body)
-s3.Object('14848hw3nosqltest','exp1').Acl().put(ACL='public-read')
+# body = open('/mnt/c/Simon/CMU/Fall2021/14-848/HW/HW3/data/exp1.csv','rb')
+# o = s3.Object('14848hw3nosqltest', 'exp1').put(Body=body)
+# s3.Object('14848hw3nosqltest','exp1').Acl().put(ACL='public-read')
 
 # create a DynamoDB table
 dyndb = boto3.resource('dynamodb',
@@ -64,32 +64,47 @@ except Exception as e:
 # wait for the table to be created
 table.meta.client.get_waiter('table_exists').wait(TableName='DataTable')
 
-print(table.item_count)
+# print(table.item_count)
 # 0
 
 
 # Reading the csv file, uploading the blobs and creating the table
-with open('c:\Simon\CMU\Fall2021\14-848\HW\HW3\data\experiments.csv', 'rb') as csvfile:
+with open('/mnt/c/Simon/CMU/Fall2021/14-848/HW/HW3/data/experiments.csv', 'rt') as csvfile:
     csvf = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for item in csvf:
-        print(item)
-        body = open('c:\Simon\CMU\Fall2021\14-848\HW\HW3\data\\'+item[4], 'rb')
-        s3.Object('datacont-name', item[4]).Acl().put(ACL='public-read')
+    # index
+    i = 0
 
-        url = "https://s3-us-west-2.amazonaws.com/datacont-name/"+item[3]
+    for item in csvf:
+        # if first row, skip
+        if i==0:
+            i += 1
+            continue
+
+        #print(item)
+        #print(item[4])
+
+        body = open('/mnt/c/Simon/CMU/Fall2021/14-848/HW/HW3/data/'+item[4], 'rb')
+        s3.Object('14848hw3nosqltest', item[4]).put(Body=body)
+        md = s3.Object('14848hw3nosqltest', item[4]).Acl().put(ACL='public-read')
+
+        url = "https://s3-us-west-2.amazonaws.com/14848hw3nosqltest/"+item[4]
         metadata_item = {'PartitionKey': item[0], 'RowKey': item[1],
-                        'description': item[4], 'date': item[2], 'url':url}
+                        'Id': item[0], 'Temp': item[1], 
+                        'Conductivity': item[2], 'Concentration': item[3],
+                        'url':url}
 
         try:
             table.put_item(Item=metadata_item)
         except:
             print("item may already be there or another failure")
+        
+        i += 1
 
 # search for an item
 response = table.get_item(
-    key = {
-        'PartitionKey': 'experiment3',
-        'RowKey': '4'
+    Key = {
+        'PartitionKey': '2',
+        'RowKey': '-2'
     }
 )
 item = response['Item']
